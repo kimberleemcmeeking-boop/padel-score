@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Padel Score</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --clay: #C8724A;
+    --bg: #1E1C1A;
+    --surface: #2A2825;
+    --border: #3D3A36;
+    --text: #F0EDE8;
+    --mid: #9E9890;
+    --dim: #6A6560;
+  }
+
+  html, body {
+    height: 100%; width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── SETUP SCREEN ── */
+  #setup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 32px 24px;
+    gap: 0;
+  }
+
+  .setup-logo {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .o3-tagline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  .o3-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 300;
+    font-size: 28px;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    display: flex;
+    align-items: flex-start;
+    gap: 1px;
+    line-height: 1;
+  }
+  .o3-logo .o3-o {
+    font-weight: 300;
+  }
+  .o3-logo .o3-super {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0;
+    margin-top: 2px;
+    color: var(--clay);
+  }
+  .o3-logo-small {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    color: var(--mid);
+    display: flex;
+    align-items: flex-start;
+    gap: 1px;
+    line-height: 1;
+  }
+  .o3-logo-small .o3-super {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0;
+    margin-top: 1px;
+    color: var(--clay);
+  }
+
+  .setup-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 42px;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 36px;
+    line-height: 1;
+  }
+
+  .setup-section {
+    width: 100%;
+    max-width: 360px;
+    margin-bottom: 24px;
+  }
+
+  .setup-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 10px;
+  }
+
+  .name-inputs {
+    display: flex;
+    gap: 10px;
+  }
+
+  .name-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.15s;
+    text-align: center;
+  }
+  .name-input:focus { border-color: var(--clay); }
+  .name-input::placeholder { color: var(--dim); }
+
+  .format-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .format-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--mid);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 14px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .format-btn.selected {
+    background: var(--clay);
+    border-color: var(--clay);
+    color: #fff;
+  }
+  .format-btn:hover { border-color: var(--clay); color: var(--text); }
+
+  .format-sub {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    opacity: 0.75;
+    margin-top: 3px;
+  }
+
+  .start-btn {
+    width: 100%;
+    max-width: 360px;
+    background: var(--clay);
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 18px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.15s;
+  }
+  .start-btn:active { opacity: 0.85; }
+
+  /* ── GAME SCREEN ── */
+  #game {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+  }
+
+  /* Top bar */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px 8px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .format-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--mid);
+    text-transform: uppercase;
+  }
+
+  .top-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .icon-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--mid);
+    padding: 6px 10px;
+    cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover, .icon-btn:active { border-color: var(--clay); color: var(--text); }
+
+  /* Sets display */
+  .sets-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px 6px;
+    flex-shrink: 0;
+  }
+
+  .set-score {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--mid);
+    background: var(--surface);
+    border-radius: 4px;
+    padding: 4px 10px;
+  }
+  .set-score.won-a { color: var(--text); }
+  .set-score.won-b { color: var(--text); }
+
+  /* Main score area — two tap zones */
+  .score-area {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .team-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background 0.1s;
+    padding: 16px 8px;
+  }
+  .team-zone:active { background: rgba(192,122,79,0.08); }
+
+  .team-zone.left { border-right: 1px solid var(--border); }
+
+  .team-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 16px;
+  }
+
+  .big-score {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(80px, 22vw, 130px);
+    line-height: 1;
+    color: var(--text);
+    transition: transform 0.1s, color 0.15s;
+  }
+  .big-score.pulse {
+    transform: scale(1.08);
+    color: var(--clay);
+  }
+
+  .games-count {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--mid);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+  }
+  .games-count span {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-left: 4px;
+  }
+
+  /* Serving indicator */
+  .serving-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--clay);
+    margin-top: 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .serving-dot.visible { opacity: 1; }
+
+  .center-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    text-transform: uppercase;
+    pointer-events: none;
+    writing-mode: vertical-rl;
+  }
+
+  /* Tiebreak / Americano indicator */
+  .mode-banner {
+    text-align: center;
+    padding: 6px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--clay);
+    background: rgba(192,122,79,0.1);
+    flex-shrink: 0;
+    min-height: 26px;
+  }
+
+  /* Match won overlay */
+  #match-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,31,36,0.96);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    gap: 8px;
+    padding: 32px;
+  }
+  #match-overlay.show { display: flex; }
+
+  .match-winner-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    color: var(--fog);
+    text-transform: uppercase;
+  }
+  .match-winner-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--clay);
+    line-height: 1;
+    text-align: center;
+  }
+  .match-final-score {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--fog);
+    margin-top: 8px;
+    letter-spacing: 0.1em;
+  }
+  .match-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 32px;
+  }
+  .match-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 14px 24px;
+    cursor: pointer;
+  }
+  .match-btn.primary { background: var(--clay); border-color: var(--clay); }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--mid);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 10px 20px;
+    opacity: 0;
+    transition: all 0.2s;
+    pointer-events: none;
+    z-index: 200;
+    white-space: nowrap;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup">
+  <div class="setup-logo">
+    <div class="o3-logo"><span class="o3-o">O</span><span class="o3-super">3</span></div>
+    <div class="o3-tagline">Out of Office</div>
+  </div>
+  <div class="setup-title">Score</div>
+
+  <div class="setup-section">
+    <div class="setup-label">Team names</div>
+    <div class="name-inputs">
+      <input class="name-input" id="nameA" placeholder="Team A" maxlength="10">
+      <input class="name-input" id="nameB" placeholder="Team B" maxlength="10">
+    </div>
+  </div>
+
+  <div class="setup-section">
+    <div class="setup-label">Format</div>
+    <div class="format-grid">
+      <button class="format-btn selected" data-format="bo3-tb7" onclick="selectFormat(this)">
+        Best of 3
+        <span class="format-sub">Tiebreak to 7</span>
+      </button>
+      <button class="format-btn" data-format="bo3-adv" onclick="selectFormat(this)">
+        Best of 3
+        <span class="format-sub">Win by 2 games</span>
+      </button>
+      <button class="format-btn" data-format="americano24" onclick="selectFormat(this)">
+        Americano
+        <span class="format-sub">First to 24</span>
+      </button>
+      <button class="format-btn" data-format="americano32" onclick="selectFormat(this)">
+        Americano
+        <span class="format-sub">First to 32</span>
+      </button>
+    </div>
+  </div>
+
+  <button class="start-btn" onclick="startGame()">Start match</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="top-bar">
+    <div class="format-tag" id="formatTag">Best of 3 · TB7</div>
+    <div class="o3-logo-small"><span>O</span><span class="o3-super">3</span></div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="undoPoint()">↩ Undo</button>
+      <button class="icon-btn" onclick="resetToSetup()">New</button>
+    </div>
+  </div>
+
+  <div class="sets-row" id="setsRow"></div>
+
+  <div class="mode-banner" id="modeBanner"></div>
+
+  <div class="score-area">
+    <div class="team-zone left" id="zoneA" onclick="addPoint(0)">
+      <div class="team-name" id="labelA">Team A</div>
+      <div class="big-score" id="scoreA">0</div>
+      <div class="games-count" id="gamesA">0 <span>games</span></div>
+      <div class="serving-dot" id="servA"></div>
+    </div>
+    <div class="center-label">vs</div>
+    <div class="team-zone" id="zoneB" onclick="addPoint(1)">
+      <div class="team-name" id="labelB">Team B</div>
+      <div class="big-score" id="scoreB">0</div>
+      <div class="games-count" id="gamesB">0 <span>games</span></div>
+      <div class="serving-dot" id="servB"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Match Won Overlay -->
+<div id="match-overlay">
+  <div class="match-winner-label">Match won</div>
+  <div class="match-winner-name" id="overlayWinner"></div>
+  <div class="match-final-score" id="overlayScore"></div>
+  <div class="match-actions">
+    <button class="match-btn" onclick="resetToSetup()">New match</button>
+    <button class="match-btn primary" onclick="rematch()">Rematch</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STATE ──
+let format = 'bo3-tb7';
+let state = {};
+let history = [];
+
+const POINTS = ['0','15','30','40'];
+
+function selectFormat(btn) {
+  document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  format = btn.dataset.format;
+}
+
+function startGame() {
+  const nA = document.getElementById('nameA').value.trim() || 'Team A';
+  const nB = document.getElementById('nameB').value.trim() || 'Team B';
+  initState(nA, nB);
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('game').style.display = 'flex';
+  render();
+}
+
+function initState(nA, nB) {
+  const isAmericano = format.startsWith('americano');
+  state = {
+    names: [nA, nB],
+    format,
+    isAmericano,
+    americanoTarget: format === 'americano32' ? 32 : 24,
+    // Standard sets
+    sets: [],          // array of [gamesA, gamesB]
+    currentSet: 0,
+    games: [0, 0],
+    points: [0, 0],    // index into POINTS (0-3), or tiebreak int
+    isTiebreak: false,
+    isMatchTiebreak: false,
+    // Americano
+    americano: [0, 0],
+    serving: 0,
+  };
+  history = [];
+}
+
+function rematch() {
+  document.getElementById('match-overlay').classList.remove('show');
+  initState(state.names[0], state.names[1]);
+  render();
+}
+
+function resetToSetup() {
+  document.getElementById('match-overlay').classList.remove('show');
+  document.getElementById('game').style.display = 'none';
+  document.getElementById('setup').style.display = 'flex';
+}
+
+// ── SCORING LOGIC ──
+
+function addPoint(team) {
+  // Save snapshot
+  history.push(JSON.parse(JSON.stringify(state)));
+  if (history.length > 50) history.shift();
+
+  if (state.isAmericano) {
+    scoreAmericano(team);
+  } else if (state.isTiebreak) {
+    scoreTiebreak(team);
+  } else {
+    scorePoint(team);
+  }
+  render();
+  pulseScore(team);
+}
+
+function scorePoint(team) {
+  const opp = 1 - team;
+  const pts = state.points;
+
+  // Deuce / advantage logic
+  if (pts[0] === 3 && pts[1] === 3) {
+    // advantage state: pts[team] can be 4
+    pts[team] = 4;
+    return;
+  }
+  if (pts[team] === 4) {
+    // win game from advantage
+    winGame(team);
+    return;
+  }
+  if (pts[opp] === 4) {
+    // back to deuce
+    pts[0] = 3; pts[1] = 3;
+    return;
+  }
+  pts[team]++;
+  if (pts[team] === 4) {
+    // check if other is also 3 → deuce
+    if (pts[opp] === 3) {
+      // advantage team
+    } else {
+      winGame(team);
+    }
+  }
+}
+
+function winGame(team) {
+  state.points = [0, 0];
+  state.games[team]++;
+  checkSetEnd(team);
+}
+
+function checkSetEnd(team) {
+  const opp = 1 - team;
+  const g = state.games;
+  const fmt = state.format;
+
+  if (fmt === 'bo3-tb7') {
+    // 6 games, win by 2; at 6-6 tiebreak
+    if (g[team] >= 6) {
+      if (g[team] - g[opp] >= 2) {
+        winSet(team);
+      } else if (g[team] === 6 && g[opp] === 6) {
+        state.isTiebreak = true;
+        state.points = [0, 0];
+      }
+    }
+  } else if (fmt === 'bo3-adv') {
+    // Win by 2 games, no tiebreak
+    if (g[team] >= 6 && g[team] - g[opp] >= 2) {
+      winSet(team);
+    }
+  }
+}
+
+function winSet(team) {
+  state.sets.push([...state.games]);
+  state.games = [0, 0];
+  state.points = [0, 0];
+  state.isTiebreak = false;
+  state.currentSet++;
+
+  // Count sets won
+  const setsWon = [0, 0];
+  state.sets.forEach(s => {
+    if (s[0] > s[1]) setsWon[0]++; else setsWon[1]++;
+  });
+
+  if (setsWon[team] === 2) {
+    matchWon(team);
+  }
+}
+
+function scoreTiebreak(team) {
+  state.points[team]++;
+  const p = state.points;
+  // Win at 7+, lead by 2
+  if (p[team] >= 7 && p[team] - p[1-team] >= 2) {
+    winSet(team);
+  }
+}
+
+function scoreAmericano(team) {
+  state.americano[team]++;
+  // Swap serve every point
+  state.serving = 1 - state.serving;
+  if (state.americano[team] >= state.americanoTarget) {
+    matchWon(team);
+  }
+}
+
+function matchWon(team) {
+  const name = state.names[team];
+  document.getElementById('overlayWinner').textContent = name;
+  let scoreStr = '';
+  if (state.isAmericano) {
+    scoreStr = `${state.americano[0]} – ${state.americano[1]}`;
+  } else {
+    const allSets = [...state.sets];
+    scoreStr = allSets.map(s => `${s[0]}–${s[1]}`).join('  ');
+  }
+  document.getElementById('overlayScore').textContent = scoreStr;
+  document.getElementById('match-overlay').classList.add('show');
+}
+
+function undoPoint() {
+  if (history.length === 0) { showToast('Nothing to undo'); return; }
+  state = history.pop();
+  render();
+  showToast('Point undone');
+}
+
+// ── RENDER ──
+
+function render() {
+  const { names, isAmericano, americano, americanoTarget, points, games, sets, isTiebreak, serving, format } = state;
+
+  document.getElementById('labelA').textContent = names[0];
+  document.getElementById('labelB').textContent = names[1];
+
+  // Format tag
+  const tagMap = {
+    'bo3-tb7': 'Best of 3 · TB7',
+    'bo3-adv': 'Best of 3 · Adv',
+    'americano24': 'Americano · 24',
+    'americano32': 'Americano · 32',
+  };
+  document.getElementById('formatTag').textContent = tagMap[format] || '';
+
+  if (isAmericano) {
+    document.getElementById('scoreA').textContent = americano[0];
+    document.getElementById('scoreB').textContent = americano[1];
+    document.getElementById('gamesA').style.display = 'none';
+    document.getElementById('gamesB').style.display = 'none';
+    document.getElementById('setsRow').innerHTML = '';
+    document.getElementById('modeBanner').textContent = `First to ${americanoTarget}`;
+    // Serving
+    document.getElementById('servA').classList.toggle('visible', serving === 0);
+    document.getElementById('servB').classList.toggle('visible', serving === 1);
+    return;
+  }
+
+  // Standard scoring
+  document.getElementById('gamesA').style.display = '';
+  document.getElementById('gamesB').style.display = '';
+
+  // Points display
+  let ptA, ptB;
+  if (isTiebreak) {
+    ptA = points[0];
+    ptB = points[1];
+  } else {
+    // Handle advantage display
+    if (points[0] === 4) { ptA = 'Ad'; ptB = ''; }
+    else if (points[1] === 4) { ptA = ''; ptB = 'Ad'; }
+    else { ptA = POINTS[points[0]]; ptB = POINTS[points[1]]; }
+  }
+  document.getElementById('scoreA').textContent = ptA;
+  document.getElementById('scoreB').textContent = ptB;
+
+  // Games
+  document.getElementById('gamesA').innerHTML = `${games[0]} <span>games</span>`;
+  document.getElementById('gamesB').innerHTML = `${games[1]} <span>games</span>`;
+
+  // Sets row
+  const setsRow = document.getElementById('setsRow');
+  setsRow.innerHTML = '';
+  sets.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'set-score ' + (s[0] > s[1] ? 'won-a' : 'won-b');
+    el.textContent = `${s[0]}–${s[1]}`;
+    setsRow.appendChild(el);
+  });
+
+  // Mode banner
+  document.getElementById('modeBanner').textContent = isTiebreak ? 'Tiebreak' : '';
+
+  // Serving (simple: changes each game)
+  const totalGames = sets.reduce((a,s) => a + s[0] + s[1], 0) + games[0] + games[1];
+  const serv = totalGames % 2;
+  document.getElementById('servA').classList.toggle('visible', serv === 0);
+  document.getElementById('servB').classList.toggle('visible', serv === 1);
+}
+
+function pulseScore(team) {
+  const el = document.getElementById(team === 0 ? 'scoreA' : 'scoreB');
+  el.classList.add('pulse');
+  setTimeout(() => el.classList.remove('pulse'), 150);
+}
+
+// ── BLUETOOTH / KEYBOARD BUTTON SUPPORT ──
+// 1 click = Team A, 2 clicks = Team B, long press = undo
+
+let clickTimer = null;
+let clickCount = 0;
+let longPressTimer = null;
+let longPressFired = false;
+const CLICK_DELAY = 350;   // ms to wait for double click
+const LONG_PRESS_MS = 600; // ms for long press
+
+document.addEventListener('keydown', (e) => {
+  if (['Enter', ' ', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+    e.preventDefault();
+    handleButtonDown();
+  }
+});
+
+document.addEventListener('keyup', (e) => {
+  if (['Enter', ' ', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+    e.preventDefault();
+    handleButtonUp();
+  }
+});
+
+function handleButtonDown() {
+  longPressFired = false;
+  longPressTimer = setTimeout(() => {
+    longPressFired = true;
+    if (document.getElementById('game').style.display !== 'none') {
+      undoPoint();
+    }
+  }, LONG_PRESS_MS);
+}
+
+function handleButtonUp() {
+  clearTimeout(longPressTimer);
+  if (longPressFired) return;
+
+  if (document.getElementById('game').style.display === 'none') return;
+
+  clickCount++;
+  clearTimeout(clickTimer);
+  clickTimer = setTimeout(() => {
+    const count = clickCount;
+    clickCount = 0;
+    if (count === 1) addPoint(0);       // 1 click = Team A
+    else if (count >= 2) addPoint(1);   // 2 clicks = Team B
+  }, CLICK_DELAY);
+}
+
+// Volume button support (Android WebView / some browsers)
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'VolumeUp' || e.keyCode === 175) { e.preventDefault(); handleButtonDown(); }
+  if (e.key === 'VolumeDown' || e.keyCode === 174) { e.preventDefault(); handleButtonDown(); }
+});
+document.addEventListener('keyup', (e) => {
+  if (e.key === 'VolumeUp' || e.keyCode === 175) { e.preventDefault(); handleButtonUp(); }
+  if (e.key === 'VolumeDown' || e.keyCode === 174) { e.preventDefault(); handleButtonUp(); }
+});
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+</script>
+</body>
+</html>
